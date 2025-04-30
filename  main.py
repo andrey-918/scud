@@ -14,18 +14,15 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Font
 from openpyxl.formatting.rule import CellIsRule
 from tkinter import simpledialog
+
+import config
 """import board
 import busio
 import digitalio
 from adafruit_pn532.spi import PN532_SPI
 from adafruit_ds3231 import DS3231"""
 
-# Пути к базам данных и файлу настроек
-DATABASE_STUDENTS = "students.db"
-DATABASE_VISITS = "visits.db"
-DATABASE_REQUESTS = "requests.db"
-DATABASE_VISITS_REPORT = "visits_report.db"
-SETTINGS_FILE = "settings.json"
+
 
 # Инициализация PN532 через SPI
 """spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
@@ -87,8 +84,8 @@ short_names = {
 
 # Загрузка настроек из JSON-файла
 def load_settings():
-    if os.path.exists(SETTINGS_FILE):
-        with open(SETTINGS_FILE, "r") as file:
+    if os.path.exists(config.SETTINGS_FILE):
+        with open(config.SETTINGS_FILE, "r") as file:
             try:
                 settings = json.load(file)
                 # Убедимся, что в настройках есть все необходимые поля
@@ -117,7 +114,7 @@ def load_settings():
 
 # Сохранение настроек в JSON-файл
 def save_settings(settings):
-    with open(SETTINGS_FILE, "w") as file:
+    with open(config.SETTINGS_FILE, "w") as file:
         json.dump(settings, file, indent=4)
 
 # Загрузка настроек при запуске программы
@@ -135,7 +132,7 @@ def create_connection(db_file):
 
 # Функция для создания таблиц
 def create_tables():
-    conn_students = create_connection(DATABASE_STUDENTS)
+    conn_students = create_connection(config.DATABASE_STUDENTS)
     if conn_students is not None:
         conn_students.execute('''
             CREATE TABLE IF NOT EXISTS students (
@@ -146,7 +143,7 @@ def create_tables():
         ''')
         conn_students.close()
 
-    conn_visits = create_connection(DATABASE_VISITS)
+    conn_visits = create_connection(config.DATABASE_VISITS)
     if conn_visits is not None:
         conn_visits.execute('''
             CREATE TABLE IF NOT EXISTS visits (
@@ -175,7 +172,7 @@ def create_tables():
         ''')
         conn_visits.close()
 
-    conn_requests = create_connection(DATABASE_REQUESTS)
+    conn_requests = create_connection(config.DATABASE_REQUESTS)
     if conn_requests is not None:
         conn_requests.execute('''
             CREATE TABLE IF NOT EXISTS requests (
@@ -205,7 +202,7 @@ def create_tables():
         conn_requests.close()
 
     # Создаем таблицу для отчетных данных
-    conn_visits_report = create_connection(DATABASE_VISITS_REPORT)
+    conn_visits_report = create_connection(config.DATABASE_VISITS_REPORT)
     if conn_visits_report is not None:
         conn_visits_report.execute('''
             CREATE TABLE IF NOT EXISTS visits_report (
@@ -240,7 +237,7 @@ def load_database():
     if file_path:
         try:
             df = pd.read_excel(file_path, engine="openpyxl")
-            conn_students = create_connection(DATABASE_STUDENTS)
+            conn_students = create_connection(config.ATABASE_STUDENTS)
             if conn_students is not None:
                 cursor = conn_students.cursor()
                 cursor.execute("DELETE FROM students")
@@ -252,7 +249,7 @@ def load_database():
                 messagebox.showinfo("Успех", "База данных успешно загружена!", parent=root)
 
                 # Инициализация базы данных №2 (посещения)
-                conn_visits = create_connection(DATABASE_VISITS)
+                conn_visits = create_connection(config.DATABASE_VISITS)
                 if conn_visits is not None:
                     cursor = conn_visits.cursor()
                     cursor.execute("DROP TABLE IF EXISTS visits")
@@ -300,13 +297,13 @@ def load_requests_database():
             df = pd.read_excel(file_path, engine="openpyxl")
             
             # Подключение к базе данных №1 (студенты)
-            conn_students = create_connection(DATABASE_STUDENTS)
+            conn_students = create_connection(config.DATABASE_STUDENTS)
             if conn_students is None:
                 messagebox.showerror("Ошибка", "Не удалось подключиться к базе данных студентов.", parent=root)
                 return
 
             # Подключение к базе данных №3 (заявочные данные)
-            conn_requests = create_connection(DATABASE_REQUESTS)
+            conn_requests = create_connection(config.DATABASE_REQUESTS)
             if conn_requests is None:
                 messagebox.showerror("Ошибка", "Не удалось подключиться к базе данных заявок.", parent=root)
                 return
@@ -411,7 +408,7 @@ def load_visits_report():
             # Переименовываем колонки
             df.rename(columns=full_names, inplace=True)
             
-            conn = create_connection(DATABASE_VISITS_REPORT)
+            conn = create_connection(config.DATABASE_VISITS_REPORT)
             if conn is not None:
                 # Очистка старой базы
                 conn.execute("DELETE FROM visits_report")
@@ -918,7 +915,7 @@ def generate_visits_report(report_date=None):
         if report_date is None:
             report_date = datetime.now().date()
 
-        conn_visits = create_connection(DATABASE_VISITS)
+        conn_visits = create_connection(config.DATABASE_VISITS)
         if conn_visits is not None:
             # Чтение данных о посещениях
             visits_df = pd.read_sql_query("SELECT * FROM visits", conn_visits)
@@ -1010,7 +1007,7 @@ def generate_visits_report(report_date=None):
 
 def generate_visits_report_everyday():
     try:
-        conn_visits = create_connection(DATABASE_VISITS)
+        conn_visits = create_connection(config.DATABASE_VISITS)
         if conn_visits is not None:
             # Чтение данных о посещениях
             visits_df = pd.read_sql_query("SELECT * FROM visits", conn_visits)
@@ -1077,8 +1074,8 @@ def generate_analytics_report():
         load_requests_database()
         load_visits_report()
 
-        conn_visits = create_connection(DATABASE_VISITS_REPORT)
-        conn_requests = create_connection(DATABASE_REQUESTS)
+        conn_visits = create_connection(config.DATABASE_VISITS_REPORT)
+        conn_requests = create_connection(config.DATABASE_REQUESTS)
 
         if conn_visits is not None and conn_requests is not None:
             # 1. Чтение данных
