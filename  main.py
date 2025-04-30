@@ -16,6 +16,7 @@ from openpyxl.formatting.rule import CellIsRule
 from tkinter import simpledialog
 
 import config
+import dicts
 """import board
 import busio
 import digitalio
@@ -48,39 +49,6 @@ REPORTS_FOLDER = "Отчеты"
 # Создаём папку, если её нет
 if not os.path.exists(REPORTS_FOLDER):
     os.makedirs(REPORTS_FOLDER)
-
-# Словарь для преобразования числа в название дня недели
-WEEKDAYS = {
-    0: "Monday",
-    1: "Tuesday",
-    2: "Wednesday",
-    3: "Thursday",
-    4: "Friday",
-    5: "Saturday",
-    6: "Sunday"
-}
-
-# Словарь для переименования колонок
-short_names = {
-    "Понедельник_Завтрак": "Понедельник_З",
-    "Понедельник_Обед": "Понедельник_О",
-    "Понедельник_Ужин": "Понедельник_У",
-    "Вторник_Завтрак": "Вторник_З",
-    "Вторник_Обед": "Вторник_О",
-    "Вторник_Ужин": "Вторник_У",
-    "Среда_Завтрак": "Среда_З",
-    "Среда_Обед": "Среда_О",
-    "Среда_Ужин": "Среда_У",
-    "Четверг_Завтрак": "Четверг_З",
-    "Четверг_Обед": "Четверг_О",
-    "Четверг_Ужин": "Четверг_У",
-    "Пятница_Завтрак": "Пятница_З",
-    "Пятница_Обед": "Пятница_О",
-    "Пятница_Ужин": "Пятница_У",
-    "Суббота_Завтрак": "Суббота_З",
-    "Суббота_Обед": "Суббота_О",
-    "Суббота_Ужин": "Суббота_У"
-}
 
 # Загрузка настроек из JSON-файла
 def load_settings():
@@ -921,7 +889,7 @@ def generate_visits_report(report_date=None):
             visits_df = pd.read_sql_query("SELECT * FROM visits", conn_visits)
 
             # Переименование колонок
-            visits_df.rename(columns=short_names, inplace=True)
+            visits_df.rename(columns=dicts.short_names, inplace=True)
 
             # Формируем имя файла с текущей датой
             date_str = report_date.strftime("%Y-%m-%d")
@@ -976,20 +944,12 @@ def generate_visits_report(report_date=None):
             # Обнуление данных о посещениях в БД №2
             cursor = conn_visits.cursor()
             
-            # Список колонок, которые нужно обнулить (все колонки, кроме uid, name, student_group)
-            columns_to_reset = [
-                "Понедельник_Завтрак", "Понедельник_Обед", "Понедельник_Ужин",
-                "Вторник_Завтрак", "Вторник_Обед", "Вторник_Ужин",
-                "Среда_Завтрак", "Среда_Обед", "Среда_Ужин",
-                "Четверг_Завтрак", "Четверг_Обед", "Четверг_Ужин",
-                "Пятница_Завтрак", "Пятница_Обед", "Пятница_Ужин",
-                "Суббота_Завтрак", "Суббота_Обед", "Суббота_Ужин"
-            ]
+           
 
             # Формируем SQL-запрос для обнуления колонок
             reset_query = f"""
                 UPDATE visits
-                SET {', '.join([f"{col} = 0" for col in columns_to_reset])}
+                SET {', '.join([f"{col} = 0" for col in dicts.columns_to_reset])}
             """
             
             save_last_report_date()
@@ -1013,7 +973,7 @@ def generate_visits_report_everyday():
             visits_df = pd.read_sql_query("SELECT * FROM visits", conn_visits)
 
             # Переименование колонок
-            visits_df.rename(columns=short_names, inplace=True)
+            visits_df.rename(columns=dicts.short_names, inplace=True)
 
             # Формируем имя файла с текущей датой
             current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -1089,23 +1049,13 @@ def generate_analytics_report():
                 on=["uid", "name", "student_group"], 
                 suffixes=("_visit", "_request")
             )
-            
-            # 3. Переименование колонок с '_visit' в чистые названия
-            meal_columns = [
-                "Понедельник_Завтрак", "Понедельник_Обед", "Понедельник_Ужин",
-                "Вторник_Завтрак", "Вторник_Обед", "Вторник_Ужин",
-                "Среда_Завтрак", "Среда_Обед", "Среда_Ужин",
-                "Четверг_Завтрак", "Четверг_Обед", "Четверг_Ужин",
-                "Пятница_Завтрак", "Пятница_Обед", "Пятница_Ужин",
-                "Суббота_Завтрак", "Суббота_Обед", "Суббота_Ужин"
-            ]
 
-            # Создаем словарь для переименования: {'Понедельник_Завтрак_visit': 'Понедельник_Завтрак', ...}
-            rename_dict = {col + "_visit": col for col in meal_columns}
+            # 3. Создаем словарь для переименования: {'Понедельник_Завтрак_visit': 'Понедельник_Завтрак', ...}
+            rename_dict = {col + "_visit": col for col in dicts.meal_columns}
             report_df.rename(columns=rename_dict, inplace=True)
             
             # 4. Удаление колонок с '_request'
-            report_df.drop(columns=[col + "_request" for col in meal_columns], inplace=True)
+            report_df.drop(columns=[col + "_request" for col in dicts.meal_columns], inplace=True)
             
             """#Фильтрация: удаляем студентов, которые ни разу не посещали приемы пищи
             report_df["total_visits"] = report_df[meal_columns].sum(axis=1)
@@ -1113,17 +1063,17 @@ def generate_analytics_report():
             report_df.drop(columns=["total_visits"], inplace=True)"""
 
             # 5. Добавление аналитических колонок
-            report_df["Всего заявок"] = requests_df[meal_columns].sum(axis=1)
+            report_df["Всего заявок"] = requests_df[dicts.meal_columns].sum(axis=1)
             report_df["Посещения по заявке"] = report_df.apply(
                 lambda row: sum(
-                    1 for col in meal_columns 
+                    1 for col in dicts.meal_columns 
                     if requests_df.loc[row.name, col] == 1 and row[col] == 1
                 ), 
                 axis=1
             )
             report_df["Посещения без заявки"] = report_df.apply(
                 lambda row: sum(
-                    1 for col in meal_columns 
+                    1 for col in dicts.meal_columns 
                     if requests_df.loc[row.name, col] == 0 and row[col] == 1
                 ), 
                 axis=1
@@ -1138,7 +1088,7 @@ def generate_analytics_report():
             # 6. Формирование финальной таблицы
             final_columns = [
                 "name", "student_group", 
-                *meal_columns, 
+                *dicts.meal_columns, 
                 "Всего заявок", "Посещения по заявке", 
                 "Посещения без заявки", "Процент посещения"
             ]
@@ -1151,15 +1101,15 @@ def generate_analytics_report():
             }, inplace=True)
 
             # 7. Сокращение названий колонок
-            final_report_df.rename(columns=short_names, inplace=True)
+            final_report_df.rename(columns=dicts.short_names, inplace=True)
 
             # 8. Добавление строки с итогами посещений
             # Создаем словарь для итоговой строки
             total_row = {"ФИО": "Итого", "Группа": ""}  # Первые две колонки
 
             # Используем переименованные названия колонок для суммирования
-            for col in meal_columns:
-                renamed_col = short_names.get(col, col)  # Получаем переименованное название колонки
+            for col in dicts.meal_columns:
+                renamed_col = dicts.short_names.get(col, col)  # Получаем переименованное название колонки
                 total_row[renamed_col] = final_report_df[renamed_col].sum()  # Сумма по каждому столбцу
 
             # Добавляем пустые значения для аналитических колонок
@@ -1206,7 +1156,7 @@ def generate_analytics_report():
                 for row in ws.iter_rows(min_row=2, max_row=ws.max_row - 1, min_col=1, max_col=ws.max_column):
                     for cell in row:
                         if cell.column_letter in ["C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S"]:
-                            if cell.value == 1 and requests_df.loc[cell.row - 2, meal_columns[cell.column - 3]] == 0:
+                            if cell.value == 1 and requests_df.loc[cell.row - 2, dicts.meal_columns[cell.column - 3]] == 0:
                                 cell.fill = yellow_fill
 
                 # Границы для заголовков, колонок "ФИО", "Группа" и аналитических колонок
