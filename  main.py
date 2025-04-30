@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 import pandas as pd
 from datetime import datetime, timedelta, time, date
-import threading #jfier
+import threading 
 import json
 import os
 import time as time_module
