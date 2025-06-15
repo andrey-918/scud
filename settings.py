@@ -6,7 +6,6 @@ from time import sleep
 from tkinter import messagebox, ttk
 from config import *
 import tkinter as tk
-from gui import root
 
 def load_settings():
     if os.path.exists(SETTINGS_FILE):
