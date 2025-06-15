@@ -1,23 +1,20 @@
-import datetime
-import os
-from tkinter import messagebox
 import board
 import busio
 import digitalio
 from adafruit_pn532.spi import PN532_SPI
 from adafruit_ds3231 import DS3231
 from time import sleep
-from database import create_connection, DATABASE_VISITS, DATABASE_STUDENTS
-from utils import get_meal_type
-from ui import show_success_window, show_no_meal_window
+from datetime import datetime
+from config import *
+from database import create_connection
+from time_utils import get_meal_type
+from gui import show_success_window, show_no_meal_window, root
 
-# Инициализация PN532 через SPI
 spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
 cs_pin = digitalio.DigitalInOut(board.D5)
 pn532 = PN532_SPI(spi, cs_pin, debug=False)
 pn532.SAM_configuration()
 
-# Инициализация RTC через I2C
 i2c = busio.I2C(board.SCL, board.SDA)
 rtc = DS3231(i2c)
 
@@ -102,13 +99,3 @@ def read_rfid():
             sleep(1)
     except KeyboardInterrupt:
         print("Считывание карт остановлено.")
-
-def sync_time_with_ds3231():
-    try:
-        rtc_time = rtc.datetime
-        print(f"Время на DS3231: {rtc_time.tm_year}-{rtc_time.tm_mon}-{rtc_time.tm_mday} {rtc_time.tm_hour}:{rtc_time.tm_min}:{rtc_time.tm_sec}")
-        time_str = f"{rtc_time.tm_year}-{rtc_time.tm_mon}-{rtc_time.tm_mday} {rtc_time.tm_hour}:{rtc_time.tm_min}:{rtc_time.tm_sec}"
-        os.system(f"sudo date -s '{time_str}'")
-        print("Время синхронизировано с DS3231.")
-    except Exception as e:
-        messagebox.showerror("Ошибка", f"Не удалось синхронизировать время: {e}")

@@ -1,11 +1,7 @@
 import sqlite3
 import pandas as pd
-from tkinter import messagebox
-
-DATABASE_STUDENTS = "students.db"
-DATABASE_VISITS = "visits.db"
-DATABASE_REQUESTS = "requests.db"
-DATABASE_VISITS_REPORT = "visits_report.db"
+from tkinter import messagebox, filedialog
+from config import *
 
 def create_connection(db_file):
     conn = None
@@ -115,7 +111,8 @@ def create_tables():
         ''')
         conn_visits_report.close()
 
-def load_database(file_path):
+def load_database():
+    file_path = filedialog.askopenfilename(title="Выберите файл базы данных", filetypes=[("Excel files", "*.xlsx")])
     if file_path:
         try:
             df = pd.read_excel(file_path, engine="openpyxl")
@@ -128,7 +125,7 @@ def load_database(file_path):
                                   (row["uid"], row["name"], row["student_group"]))
                 conn_students.commit()
                 conn_students.close()
-                messagebox.showinfo("Успех", "База данных успешно загружена!")
+                messagebox.showinfo("Успех", "База данных успешно загружена!", parent=root)
 
                 conn_visits = create_connection(DATABASE_VISITS)
                 if conn_visits is not None:
@@ -166,19 +163,20 @@ def load_database(file_path):
                     conn_visits.commit()
                     conn_visits.close()
         except Exception as e:
-            messagebox.showerror("Ошибка", f"Не удалось загрузить базу данных: {e}")
+            messagebox.showerror("Ошибка", f"Не удалось загрузить базу данных: {e}", parent=root)
 
-def load_requests_database(file_path):
+def load_requests_database():
+    file_path = filedialog.askopenfilename(title="Выберите заявочный файл", filetypes=[("Excel files", "*.xlsx")])
     if file_path:
         try:
             df = pd.read_excel(file_path, engine="openpyxl")
             conn_students = create_connection(DATABASE_STUDENTS)
             if conn_students is None:
-                messagebox.showerror("Ошибка", "Не удалось подключиться к базе данных студентов.")
+                messagebox.showerror("Ошибка", "Не удалось подключиться к базе данных студентов.", parent=root)
                 return
             conn_requests = create_connection(DATABASE_REQUESTS)
             if conn_requests is None:
-                messagebox.showerror("Ошибка", "Не удалось подключиться к базе данных заявок.")
+                messagebox.showerror("Ошибка", "Не удалось подключиться к базе данных заявок.", parent=root)
                 return
             cursor_students = conn_students.cursor()
             cursor_requests = conn_requests.cursor()
@@ -208,16 +206,20 @@ def load_requests_database(file_path):
                                     WHERE uid = ?
                                 ''', (uid,))
             conn_requests.commit()
-            messagebox.showinfo("Успех", "Заявочный файл успешно загружен!")
+            messagebox.showinfo("Успех", "Заявочный файл успешно загружен!", parent=root)
         except Exception as e:
-            messagebox.showerror("Ошибка", f"Не удалось загрузить заявочный файл: {e}")
+            messagebox.showerror("Ошибка", f"Не удалось загрузить заявочный файл: {e}", parent=root)
         finally:
             if conn_students:
                 conn_students.close()
             if conn_requests:
                 conn_requests.close()
 
-def load_visits_report(file_path):
+def load_visits_report():
+    file_path = filedialog.askopenfilename(
+        title="Выберите отчет №1", 
+        filetypes=[("Excel files", "*.xlsx")]
+    )
     if file_path:
         try:
             df = pd.read_excel(file_path, engine="openpyxl")
@@ -258,9 +260,9 @@ def load_visits_report(file_path):
                 conn.execute("DELETE FROM visits_report")
                 df.to_sql('visits_report', conn, if_exists='append', index=False)
                 conn.commit()
-                messagebox.showinfo("Успех", "Данные отчета успешно загружены!")
+                messagebox.showinfo("Успех", "Данные отчета успешно загружены!", parent=root)
         except Exception as e:
-            messagebox.showerror("Ошибка", f"Ошибка загрузки отчета: {e}")
+            messagebox.showerror("Ошибка", f"Ошибка загрузки отчета: {e}", parent=root)
         finally:
             if conn:
                 conn.close()
