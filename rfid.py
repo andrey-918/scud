@@ -8,7 +8,7 @@ from datetime import datetime
 from config import *
 from database import create_connection
 from time_utils import get_meal_type
-from gui import show_success_window, show_no_meal_window, root
+from gui import show_success_window, show_no_meal_window
 
 spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
 cs_pin = digitalio.DigitalInOut(board.D5)
