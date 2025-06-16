@@ -52,35 +52,36 @@ def show_user_window(root):
 
     button_font = ('Arial', 18)
 
-    # Use grid layout for better button organization
-    top_frame = tk.Frame(main_frame, bg="#f0f0f0")
-    top_frame.pack(expand=True, fill='both', pady=10)
-    middle_frame = tk.Frame(main_frame, bg="#f0f0f0")
-    middle_frame.pack(expand=True, fill='both', pady=10)
-    bottom_frame = tk.Frame(main_frame, bg="#f0f0f0")
-    bottom_frame.pack(expand=True, fill='both', pady=10)
+    # Configure grid for main_frame
+    main_frame.columnconfigure(0, weight=1)
+    main_frame.columnconfigure(1, weight=1)
+    main_frame.columnconfigure(2, weight=1)
+    main_frame.rowconfigure(0, weight=1)
+    main_frame.rowconfigure(1, weight=1)
+    main_frame.rowconfigure(2, weight=1)
 
-    tk.Button(top_frame, text="Загрузить базу данных",
-             command=lambda: load_database(root),
-             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=0, sticky='nsew', padx=5, pady=5)
-    
-    tk.Button(middle_frame, text="Сформировать отчёт по посещениям",
-             command=lambda: generate_visits_report_everyday(root),
-             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=1, sticky='nsew', padx=5, pady=5)
-    
-    tk.Button(bottom_frame, text="Сформировать отчёт с аналитикой",
-             command=lambda: generate_analytics_report(root),
-             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=0, sticky='nsew', padx=5, pady=5)
-    
-    tk.Button(bottom_frame, text="Настройки",
-             command=lambda: open_settings(root),
-             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=1, sticky='nsew', padx=5, pady=5)
-    
-    tk.Button(bottom_frame, text="Выход",
-             command=user_window.destroy,
-             font=button_font, bg="#f44336", fg="white", relief="flat", activebackground="#d32f2f").grid(row=0, column=2, sticky='nsew', padx=5, pady=5)
+    # Create and grid buttons
+    btn_load_db = tk.Button(main_frame, text="Загрузить базу данных",
+                            command=lambda: load_database(root),
+                            font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2")
+    btn_load_db.grid(row=0, column=0, columnspan=3, sticky='nsew', padx=10, pady=10)
 
-    # Configure grid weights to make buttons expand evenly
-    top_frame.columnconfigure((0, 1), weight=1)
-    middle_frame.columnconfigure((0, 1), weight=1)
-    bottom_frame.columnconfigure((0, 1, 2), weight=1)
+    btn_generate_report = tk.Button(main_frame, text="Сформировать отчёт по посещениям",
+                                    command=lambda: generate_visits_report_everyday(root),
+                                    font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2")
+    btn_generate_report.grid(row=1, column=0, columnspan=3, sticky='nsew', padx=10, pady=10)
+
+    btn_analytics = tk.Button(main_frame, text="Сформировать отчёт с аналитикой",
+                              command=lambda: generate_analytics_report(root),
+                              font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2")
+    btn_analytics.grid(row=2, column=0, sticky='nsew', padx=10, pady=10)
+
+    btn_settings = tk.Button(main_frame, text="Настройки",
+                             command=lambda: open_settings(root),
+                             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2")
+    btn_settings.grid(row=2, column=1, sticky='nsew', padx=10, pady=10)
+
+    btn_exit = tk.Button(main_frame, text="Выход",
+                         command=user_window.destroy,
+                         font=button_font, bg="#f44336", fg="white", relief="flat", activebackground="#d32f2f")
+    btn_exit.grid(row=2, column=2, sticky='nsew', padx=10, pady=10)
