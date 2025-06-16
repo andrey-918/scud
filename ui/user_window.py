@@ -63,23 +63,19 @@ def show_user_window(root):
     tk.Button(top_frame, text="Загрузить базу данных",
              command=lambda: load_database(root),
              font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=0, sticky='nsew', padx=5, pady=5)
-    tk.Button(top_frame, text="Загрузить заявочный файл",
-             command=lambda: load_requests_database(root),
-             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=1, sticky='nsew', padx=5, pady=5)
-
-    tk.Button(middle_frame, text="Отчёт №1",
-             command=lambda: generate_visits_report(root=root),
-             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=0, sticky='nsew', padx=5, pady=5)
-    tk.Button(middle_frame, text="Отчёт №1 РГ",
+    
+    tk.Button(middle_frame, text="Сформировать отчёт по посещениям",
              command=lambda: generate_visits_report_everyday(root),
              font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=1, sticky='nsew', padx=5, pady=5)
-
-    tk.Button(bottom_frame, text="Отчёт №2",
+    
+    tk.Button(bottom_frame, text="Сформировать отчёт с аналитикой",
              command=lambda: generate_analytics_report(root),
              font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=0, sticky='nsew', padx=5, pady=5)
+    
     tk.Button(bottom_frame, text="Настройки",
              command=lambda: open_settings(root),
              font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").grid(row=0, column=1, sticky='nsew', padx=5, pady=5)
+    
     tk.Button(bottom_frame, text="Выход",
              command=user_window.destroy,
              font=button_font, bg="#f44336", fg="white", relief="flat", activebackground="#d32f2f").grid(row=0, column=2, sticky='nsew', padx=5, pady=5)
