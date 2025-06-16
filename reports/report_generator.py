@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from tkinter import messagebox, filedialog
 from openpyxl import Workbook
@@ -24,6 +25,10 @@ def generate_visits_report(report_date=None, root=None):
             date_str = report_date.strftime("%Y-%m-%d")
             default_filename = f"Отчет_по_посещениям_{date_str}.xlsx"
             report_path = os.path.join(REPORTS_FOLDER, default_filename)
+
+            # Ensure REPORTS_FOLDER exists
+            if not os.path.exists(REPORTS_FOLDER):
+                os.makedirs(REPORTS_FOLDER)
 
             wb = Workbook()
             ws = wb.active
@@ -88,6 +93,10 @@ def generate_visits_report_everyday(root):
             current_date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             default_filename = f"Отчет_по_посещениям_РГ_{current_date}.xlsx"
             report_path = os.path.join(REPORTS_FOLDER, default_filename)
+
+            # Ensure REPORTS_FOLDER exists
+            if not os.path.exists(REPORTS_FOLDER):
+                os.makedirs(REPORTS_FOLDER)
 
             wb = Workbook()
             ws = wb.active
