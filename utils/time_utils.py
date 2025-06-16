@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta, time, date
 from config.settings import load_settings
-from reports.report_generator import generate_visits_report
 
 def get_meal_type(current_time):
     settings = load_settings()
@@ -61,6 +60,7 @@ def check_and_generate_report(root):
     global report_generated
     report_generated = False
     try:
+        from reports.report_generator import generate_visits_report  # Moved import here
         last_report_date = get_last_report_date()
         last_saturday = get_last_saturday()
         if last_saturday is None:
