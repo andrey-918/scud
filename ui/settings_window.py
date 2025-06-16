@@ -9,35 +9,36 @@ def open_settings(root):
     settings_window = tk.Toplevel(root)
     settings_window.title("Настройки")
     settings_window.attributes('-fullscreen', True)
+    settings_window.configure(bg="#f0f0f0")
 
-    content_frame = tk.Frame(settings_window)
-    content_frame.pack(expand=True, fill='both', padx=20, pady=20)
+    content_frame = tk.Frame(settings_window, bg="#f0f0f0")
+    content_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
-    title_font = ('Arial', 36)
-    label_font = ('Arial', 28)
-    time_font = ('Arial', 28)
-    button_font = ('Arial', 32)
+    title_font = ('Arial', 24)
+    label_font = ('Arial', 18)
+    time_font = ('Arial', 18)
+    button_font = ('Arial', 18)
 
     settings = load_settings()
     time_vars = {}
 
     def create_time_section(parent, meal_name, meal_data):
-        meal_frame = tk.Frame(parent)
-        meal_frame.pack(fill='x', pady=10)
-        tk.Label(meal_frame, text=meal_name.capitalize() + ":", font=title_font).pack(anchor='w', pady=5)
+        meal_frame = tk.Frame(parent, bg="#f0f0f0")
+        meal_frame.pack(fill='x', pady=5)
+        tk.Label(meal_frame, text=meal_name.capitalize() + ":", font=title_font, bg="#f0f0f0").pack(anchor='w', pady=3)
         
-        start_frame = tk.Frame(meal_frame)
-        start_frame.pack(fill='x', padx=10, pady=5)
-        tk.Label(start_frame, text="Начало:", font=label_font).pack(side='left', padx=5)
+        start_frame = tk.Frame(meal_frame, bg="#f0f0f0")
+        start_frame.pack(fill='x', padx=5, pady=3)
+        tk.Label(start_frame, text="Начало:", font=label_font, bg="#f0f0f0").pack(side='left', padx=3)
         hour_var = create_time_combobox(start_frame, meal_data['start'][0], 24)
-        tk.Label(start_frame, text=":", font=label_font).pack(side='left')
+        tk.Label(start_frame, text=":", font=label_font, bg="#f0f0f0").pack(side='left')
         minute_var = create_time_combobox(start_frame, meal_data['start'][1], 60)
         
-        end_frame = tk.Frame(meal_frame)
-        end_frame.pack(fill='x', padx=10, pady=5)
-        tk.Label(end_frame, text="Окончание:", font=label_font).pack(side='left', padx=5)
+        end_frame = tk.Frame(meal_frame, bg="#f0f0f0")
+        end_frame.pack(fill='x', padx=5, pady=3)
+        tk.Label(end_frame, text="Окончание:", font=label_font, bg="#f0f0f0").pack(side='left', padx=3)
         end_hour_var = create_time_combobox(end_frame, meal_data['end'][0], 24)
-        tk.Label(end_frame, text=":", font=label_font).pack(side='left')
+        tk.Label(end_frame, text=":", font=label_font, bg="#f0f0f0").pack(side='left')
         end_minute_var = create_time_combobox(end_frame, meal_data['end'][1], 60)
         
         return {
@@ -48,19 +49,19 @@ def open_settings(root):
     for meal in ['breakfast', 'lunch', 'dinner']:
         time_vars[meal] = create_time_section(content_frame, meal, settings[meal])
 
-    tk.Frame(content_frame, height=2, bg='gray').pack(fill='x', pady=20)
+    tk.Frame(content_frame, height=2, bg='gray').pack(fill='x', pady=10)
 
-    tk.Label(content_frame, text="Минимальный процент посещений:", font=label_font).pack(anchor='w', pady=5)
+    tk.Label(content_frame, text="Минимальный процент посещений:", font=label_font, bg="#f0f0f0").pack(anchor='w', pady=3)
     min_percent_entry = tk.Entry(content_frame, font=time_font)
     min_percent_entry.insert(0, str(settings.get("min_percent", DEFAULT_MIN_PERCENT)))
-    min_percent_entry.pack(fill='x', padx=20, pady=5)
+    min_percent_entry.pack(fill='x', padx=10, pady=3)
 
-    tk.Label(content_frame, text="Новый пароль:", font=label_font).pack(anchor='w', pady=5)
+    tk.Label(content_frame, text="Новый пароль:", font=label_font, bg="#f0f0f0").pack(anchor='w', pady=3)
     new_password_entry = tk.Entry(content_frame, font=time_font, show='*')
-    new_password_entry.pack(fill='x', padx=20, pady=5)
+    new_password_entry.pack(fill='x', padx=10, pady=3)
 
-    button_frame = tk.Frame(content_frame)
-    button_frame.pack(fill='x', pady=20)
+    button_frame = tk.Frame(content_frame, bg="#f0f0f0")
+    button_frame.pack(fill='x', pady=10)
 
     def save_settings_handler():
         try:
@@ -83,8 +84,8 @@ def open_settings(root):
 
     tk.Button(button_frame, text="Настройка времени на ПК",
              command=lambda: open_rtc_time_setting(root),
-             font=button_font, bg="#2196F3", fg="white").pack(fill='x', pady=5)
+             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").pack(fill='x', pady=3)
     tk.Button(button_frame, text="Сохранить", command=save_settings_handler,
-             font=button_font, bg="#2196F3", fg="white").pack(fill='x', pady=5)
+             font=button_font, bg="#2196F3", fg="white", relief="flat", activebackground="#1976D2").pack(fill='x', pady=3)
     tk.Button(button_frame, text="Выход", command=settings_window.destroy,
-             font=button_font, bg="#f44336", fg="white").pack(fill='x', pady=5)
+             font=button_font, bg="#f44336", fg="white", relief="flat", activebackground="#d32f2f").pack(fill='x', pady=3)
