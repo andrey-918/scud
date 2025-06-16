@@ -8,6 +8,8 @@ from openpyxl.formatting.rule import CellIsRule
 from config.constants import DATABASE_VISITS, DATABASE_VISITS_REPORT, DATABASE_REQUESTS, REPORTS_FOLDER, SHORT_NAMES, DEFAULT_MIN_PERCENT
 from config.settings import load_settings
 from database.db_init import create_connection
+from database.db_operations import load_requests_database
+from database.db_report import load_visits_report
 from utils.file_utils import delete_old_reports
 from utils.time_utils import save_last_report_date
 from datetime import datetime
@@ -130,10 +132,10 @@ def generate_visits_report_everyday(root):
         if conn_visits:
             conn_visits.close()
 
-def generate_analytics_report():
+def generate_analytics_report(root):
     try:
-        load_requests_database()
-        load_visits_report()
+        load_requests_database(root)
+        load_visits_report(root)
 
         conn_visits = create_connection(DATABASE_VISITS_REPORT)
         conn_requests = create_connection(DATABASE_REQUESTS)
