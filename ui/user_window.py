@@ -15,6 +15,7 @@ def open_user_window(root):
     password_window.title("Ввод пароля")
     password_window.attributes('-fullscreen', True)
     password_window.configure(bg="#f0f0f0")
+    password_window.update()  # Ensure window is rendered before adding widgets
 
     label_font = ('Arial', 24)
     entry_font = ('Arial', 20)
@@ -46,36 +47,39 @@ def show_user_window(root):
     user_window.title("Управление")
     user_window.attributes('-fullscreen', True)
     user_window.configure(bg="#f0f0f0")
+    user_window.update()  # Force window update to apply fullscreen
+    print("User window created with fullscreen attribute")  # Debug
 
-    # Single main frame for all buttons
+    # Fallback geometry if fullscreen fails
+    try:
+        user_window.geometry("800x480")  # Common Raspberry Pi resolution
+    except tk.TclError as e:
+        print(f"Geometry error: {e}")
+
     main_frame = tk.Frame(user_window, bg="#f0f0f0")
-    main_frame.pack(expand=True, fill='both', padx=50, pady=50)  # Increased padding for better spacing
+    main_frame.pack(expand=True, fill='both', padx=100, pady=100)  # Increased padding
+    print("Main frame packed")  # Debug
 
-    button_font = ('Arial', 18, 'bold')  # Bold font for better readability
+    button_font = ('Arial', 18, 'bold')  # Bold for readability
 
-    # Configure grid with 2 columns: one for buttons, one empty for centering
-    main_frame.columnconfigure(0, weight=1)
-    main_frame.columnconfigure(1, weight=1)
-    main_frame.rowconfigure((0, 1, 2, 3, 4), weight=1)  # Equal weight for all rows
-
-    # Button styling parameters
+    # Button styling
     button_style = {
         "font": button_font,
         "fg": "white",
-        "relief": "raised",  # Subtle raised effect for depth
-        "bd": 3,  # Border width
-        "ipadx": 20,  # Internal padding for consistent width
-        "ipady": 10,  # Internal padding for consistent height
+        "relief": "raised",
+        "bd": 3,
+        "ipadx": 30,  # Increased for wider buttons
+        "ipady": 15,  # Increased for taller buttons
     }
 
-    # Hover effect functions
+    # Hover effects
     def on_enter(event, button, hover_bg):
         button.config(bg=hover_bg)
 
     def on_leave(event, button, original_bg):
         button.config(bg=original_bg)
 
-    # Create buttons with consistent styling
+    # Buttons
     buttons = [
         ("Загрузить базу данных", lambda: load_database(root), "#2196F3", "#1976D2"),
         ("Сформировать отчёт по посещениям", lambda: generate_visits_report_everyday(root), "#2196F3", "#1976D2"),
@@ -84,12 +88,13 @@ def show_user_window(root):
         ("Выход", user_window.destroy, "#f44336", "#d32f2f"),
     ]
 
-    for row, (text, command, bg, hover_bg) in enumerate(buttons):
+    for idx, (text, command, bg, hover_bg) in enumerate(buttons):
         btn = tk.Button(main_frame, text=text, command=command, bg=bg, activebackground=hover_bg, **button_style)
-        btn.grid(row=row, column=0, sticky='ew', padx=20, pady=15)  # Increased padding
-        # Bind hover effects
+        btn.pack(fill='x', padx=20, pady=20)  # Vertical stacking with generous padding
         btn.bind("<Enter>", lambda e, b=btn, h=hover_bg: on_enter(e, b, h))
         btn.bind("<Leave>", lambda e, b=btn, o=bg: on_leave(e, b, o))
+        print(f"Button '{text}' added at index {idx}")  # Debug
 
-    # Add empty label in column 1 to balance the grid
-    tk.Label(main_frame, text="", bg="#f0f0f0").grid(row=0, column=1, sticky='ew')
+    # Ensure frame is visible
+    main_frame.update()
+    print("Main frame updated")  # Debug
