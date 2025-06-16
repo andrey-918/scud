@@ -1,24 +1,33 @@
+import tkinter as tk
+from config.settings import load_settings
+from database.db_init import create_connection
+from database.db_operations import DATABASE_STUDENTS, DATABASE_VISITS
+from utils.time_utils import get_meal_type
+from datetime import datetime
+"""
 import board
 import busio
 import digitalio
 from adafruit_pn532.spi import PN532_SPI
 from adafruit_ds3231 import DS3231
+"""
 from time import sleep
-from datetime import datetime
-from database import create_connection, DATABASE_VISITS, DATABASE_STUDENTS
-from utils import get_meal_type, WEEKDAYS
-from gui import show_success_window, show_no_meal_window
 
-spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
-cs_pin = digitalio.DigitalInOut(board.D5)
-pn532 = PN532_SPI(spi, cs_pin, debug=False)
-pn532.SAM_configuration()
+def show_success_window(root):
+    success_window = tk.Toplevel(root)
+    success_window.title("Успешно")
+    success_window.attributes('-fullscreen', True)
+    tk.Label(success_window, text="Успешно!", font=("Arial", 48), bg="green", fg="white").pack(expand=True, fill='both')
+    success_window.after(3000, success_window.destroy)
 
-i2c = busio.I2C(board.SCL, board.SDA)
-rtc = DS3231(i2c)
+def show_no_meal_window(root):
+    no_meal_window = tk.Toplevel(root)
+    no_meal_window.title("Сейчас не время приёма пищи")
+    no_meal_window.attributes('-fullscreen', True)
+    tk.Label(no_meal_window, text="Сейчас не время приёма пищи", font=("Arial", 36), bg="red", fg="white").pack(expand=True, fill='both')
+    no_meal_window.after(3000, no_meal_window.destroy)
 
-def process_uid(uid, root):
-    current_time = rtc.datetime
+def process_uid(uid, root, current_time):
     meal_type = get_meal_type(current_time)
     if meal_type:
         year = current_time.tm_year
@@ -26,7 +35,18 @@ def process_uid(uid, root):
         day = current_time.tm_mday
         date_obj = datetime(year, month, day)
         day_of_week = date_obj.weekday()
-        day_name = WEEKDAYS[day_of_week]
+
+        russian_weekdays = {
+            0: "Понедельник",
+            1: "Вторник",
+            2: "Среда",
+            3: "Четверг",
+            4: "Пятница",
+            5: "Суббота",
+            6: "Воскресенье"
+        }
+        day_name = russian_weekdays[day_of_week]
+
         meal_type_translation = {
             "breakfast": "Завтрак",
             "lunch": "Обед",
@@ -34,13 +54,14 @@ def process_uid(uid, root):
         }
         russian_meal_type = meal_type_translation.get(meal_type, meal_type)
         column_name = f"{day_name}_{russian_meal_type}"
-        
+
         conn_visits = create_connection(DATABASE_VISITS)
-        if conn_visits is not None:
+        if conn_visits:
             try:
                 cursor = conn_visits.cursor()
                 cursor.execute("SELECT * FROM visits WHERE uid = ?", (uid,))
                 result = cursor.fetchone()
+
                 if result:
                     cursor.execute(f'''
                         UPDATE visits
@@ -49,14 +70,11 @@ def process_uid(uid, root):
                     ''', (uid,))
                 else:
                     conn_students = create_connection(DATABASE_STUDENTS)
-                    if conn_students is not None:
+                    if conn_students:
                         cursor_students = conn_students.cursor()
                         cursor_students.execute("SELECT name, student_group FROM students WHERE uid = ?", (uid,))
                         student_data = cursor_students.fetchone()
-                        if student_data:
-                            name, student_group = student_data
-                        else:
-                            name, student_group = "Неизвестный", "Неизвестная группа"
+                        name, student_group = student_data if student_data else ("Неизвестный", "Неизвестная группа")
                         cursor.execute('''
                             INSERT INTO visits (uid, name, student_group)
                             VALUES (?, ?, ?)
@@ -67,24 +85,34 @@ def process_uid(uid, root):
                             WHERE uid = ?
                         ''', (uid,))
                         conn_students.close()
+
                 conn_visits.commit()
+                print(f"UID {uid} обработан для {meal_type} ({russian_meal_type}) в {day_name}.")
                 show_success_window(root)
             except Exception as e:
                 print(f"Ошибка при обработке UID: {e}")
             finally:
                 conn_visits.close()
     else:
+        print("Сейчас не время приёма пищи.")
         show_no_meal_window(root)
 
 def read_rfid(root):
+    """
+    spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+    cs_pin = digitalio.DigitalInOut(board.D5)
+    pn532 = PN532_SPI(spi, cs_pin, debug=False)
+    pn532.SAM_configuration()
+    """
     try:
         while True:
             print("Поднесите карту к считывателю...")
-            uid = pn532.read_passive_target(timeout=0.5)
+            # uid = pn532.read_passive_target(timeout=0.5)
+            uid = None  # Placeholder for testing without hardware
             if uid is not None:
                 uid_str = "".join([f"{byte:02X}" for byte in uid])
                 print(f"Считан UID: {uid_str}")
-                process_uid(uid_str, root)
+                process_uid(uid_str, root, datetime.now())
             sleep(1)
     except KeyboardInterrupt:
         print("Считывание карт остановлено.")

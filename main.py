@@ -1,27 +1,23 @@
-import tkinter as tk #hfiuewh
 import threading
-from database import create_tables
-from gui import update_time_date, open_user_window
-from rfid import read_rfid
-from utils import check_and_generate_report
+from database.db_init import create_tables
+from ui.main_window import create_main_window
+from utils.time_utils import check_and_generate_report
+from hardware.rfid_reader import read_rfid
+from config.constants import disable_ntp
 
 def main():
-    create_tables()
-    root = tk.Tk()
-    root.title("Учёт льготного питания")
-    root.attributes('-fullscreen', True)
+    create_tables()  # Initialize database tables
+    disable_ntp()    # Disable NTP for time synchronization
 
-    time_date_label = tk.Label(root, font=("Arial", 48), fg="black")
-    time_date_label.pack(expand=True, fill='both', pady=50)
-    update_time_date(time_date_label)
+    # Create the main application window
+    root = create_main_window()
 
-    tk.Button(root, text="Пользователь", command=lambda: open_user_window(root), 
-             font=("Arial", 36), bg="#2196F3", fg="white", height=3).pack(expand=True, fill='both', padx=100, pady=50)
-
-    rfid_thread = threading.Thread(target=read_rfid, args=(root,), daemon=True)
+    # Start RFID reading in a background thread (if hardware is enabled)
+    rfid_thread = threading.Thread(target=read_rfid, daemon=True)
     rfid_thread.start()
 
-    check_and_generate_report()
+    # Schedule periodic report generation
+    check_and_generate_report(root)
 
     root.mainloop()
 
