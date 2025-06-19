@@ -4,13 +4,13 @@ from database.db_init import create_connection
 from database.db_operations import DATABASE_STUDENTS, DATABASE_VISITS
 from utils.time_utils import get_meal_type
 from datetime import datetime
-"""
+
 import board
 import busio
 import digitalio
 from adafruit_pn532.spi import PN532_SPI
 from adafruit_ds3231 import DS3231
-"""
+
 from time import sleep
 
 def show_success_window(root):
@@ -98,12 +98,12 @@ def process_uid(uid, root, current_time):
         show_no_meal_window(root)
 
 def read_rfid(root):
-    """
+
     spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
     cs_pin = digitalio.DigitalInOut(board.D5)
     pn532 = PN532_SPI(spi, cs_pin, debug=False)
     pn532.SAM_configuration()
-    """
+
     try:
         while True:
             print("Поднесите карту к считывателю...")
