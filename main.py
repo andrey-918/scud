@@ -13,7 +13,7 @@ def main():
     root = create_main_window()
 
     # Start RFID reading in a background thread (if hardware is enabled)
-    rfid_thread = threading.Thread(target=read_rfid(root), daemon=True)
+    rfid_thread = threading.Thread(target=read_rfid, args=(root), daemon=True)
     rfid_thread.start()
 
     # Schedule periodic report generation
