@@ -168,10 +168,10 @@ def generate_analytics_report(root):
             # 4. Удаление колонок с '_request'
             report_df.drop(columns=[col + "_request" for col in meal_columns], inplace=True)
             
-            """#Фильтрация: удаляем студентов, которые ни разу не посещали приемы пищи
+            #Фильтрация: удаляем студентов, которые ни разу не посещали приемы пищи
             report_df["total_visits"] = report_df[meal_columns].sum(axis=1)
             report_df = report_df[report_df["total_visits"] > 0]
-            report_df.drop(columns=["total_visits"], inplace=True)"""
+            report_df.drop(columns=["total_visits"], inplace=True)
 
             # 5. Добавление аналитических колонок
             report_df["Всего заявок"] = requests_df[meal_columns].sum(axis=1)
