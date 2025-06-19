@@ -8,7 +8,6 @@ DATABASE_VISITS_REPORT = "visits_report.db"
 SETTINGS_FILE = "settings.json"
 REPORTS_FOLDER = "Отчеты"
 
-# Default meal times
 DEFAULT_MEAL_TIMES = {
     "breakfast": {"start": (7, 0), "end": (10, 0)},
     "lunch": {"start": (12, 0), "end": (15, 0)},
@@ -18,7 +17,6 @@ DEFAULT_MEAL_TIMES = {
 DEFAULT_MIN_PERCENT = 65
 DEFAULT_PASSWORD = "1111"
 
-# Weekday mapping
 WEEKDAYS = {
     0: "Monday",
     1: "Tuesday",
@@ -29,7 +27,6 @@ WEEKDAYS = {
     6: "Sunday"
 }
 
-# Short column names for reports
 SHORT_NAMES = {
     "Понедельник_Завтрак": "Понедельник_З",
     "Понедельник_Обед": "Понедельник_О",
@@ -51,13 +48,11 @@ SHORT_NAMES = {
     "Суббота_Ужин": "Суббота_У"
 }
 
-# Create reports folder if it doesn't exist
 if not os.path.exists(REPORTS_FOLDER):
     os.makedirs(REPORTS_FOLDER)
 
-# Disable NTP for time synchronization
 def disable_ntp():
     print("Отключаем NTP...")
     os.system("sudo timedatectl set-ntp false")
     import time
-    time.sleep(1)  # Allow time for system command execution
+    time.sleep(1)  

@@ -7,7 +7,6 @@ def load_settings():
         with open(SETTINGS_FILE, "r") as file:
             try:
                 settings = json.load(file)
-                # Ensure all required fields are present
                 if "password" not in settings:
                     settings["password"] = DEFAULT_PASSWORD
                 if "min_percent" not in settings:
@@ -17,13 +16,11 @@ def load_settings():
                         settings[meal] = times
                 return settings
             except json.JSONDecodeError:
-                # Return default settings if file is corrupted
                 return {
                     **DEFAULT_MEAL_TIMES,
                     "password": DEFAULT_PASSWORD,
                     "min_percent": DEFAULT_MIN_PERCENT
                 }
-    # Return default settings if file doesn't exist
     return {
         **DEFAULT_MEAL_TIMES,
         "password": DEFAULT_PASSWORD,
