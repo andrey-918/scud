@@ -2,6 +2,7 @@ import tkinter as tk
 from config.settings import load_settings
 from database.db_init import create_connection
 from database.db_operations import DATABASE_STUDENTS, DATABASE_VISITS
+from hardware import rtc
 from utils.time_utils import get_meal_type
 from datetime import datetime
 
