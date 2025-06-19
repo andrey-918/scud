@@ -107,8 +107,7 @@ def read_rfid(root):
     try:
         while True:
             print("Поднесите карту к считывателю...")
-            # uid = pn532.read_passive_target(timeout=0.5)
-            uid = None  # Placeholder for testing without hardware
+            uid = pn532.read_passive_target(timeout=0.5)
             if uid is not None:
                 uid_str = "".join([f"{byte:02X}" for byte in uid])
                 print(f"Считан UID: {uid_str}")
