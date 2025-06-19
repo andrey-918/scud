@@ -3,8 +3,8 @@ from config.settings import load_settings
 
 def get_meal_type(current_time):
     settings = load_settings()
-    hour = current_time.tm_hour
-    minute = current_time.tm_min
+    hour = current_time.hour    # Corrected to use .hour for datetime.datetime
+    minute = current_time.minute # Corrected to use .minute for datetime.datetime
     valid_meals = ["breakfast", "lunch", "dinner"]
 
     for meal_type, times in settings.items():
@@ -60,7 +60,7 @@ def check_and_generate_report(root):
     global report_generated
     report_generated = False
     try:
-        from reports.report_generator import generate_visits_report  # Moved import here
+        from reports.report_generator import generate_visits_report
         last_report_date = get_last_report_date()
         last_saturday = get_last_saturday()
         if last_saturday is None:
