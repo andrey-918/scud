@@ -10,7 +10,6 @@ def create_connection(db_file):
     return None
 
 def create_tables():
-    # Students database
     conn_students = create_connection(DATABASE_STUDENTS)
     if conn_students:
         conn_students.execute('''
@@ -22,7 +21,6 @@ def create_tables():
         ''')
         conn_students.close()
 
-    # Visits database
     conn_visits = create_connection(DATABASE_VISITS)
     if conn_visits:
         conn_visits.execute('''
@@ -52,7 +50,6 @@ def create_tables():
         ''')
         conn_visits.close()
 
-    # Requests database
     conn_requests = create_connection(DATABASE_REQUESTS)
     if conn_requests:
         conn_requests.execute('''
@@ -82,7 +79,6 @@ def create_tables():
         ''')
         conn_requests.close()
 
-    # Visits report database
     conn_visits_report = create_connection(DATABASE_VISITS_REPORT)
     if conn_visits_report:
         conn_visits_report.execute('''

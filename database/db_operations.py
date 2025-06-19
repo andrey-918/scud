@@ -19,7 +19,6 @@ def load_database(root):
                 conn_students.close()
                 messagebox.showinfo("Успех", "База данных успешно загружена!", parent=root)
 
-                # Initialize visits database
                 conn_visits = create_connection(DATABASE_VISITS)
                 if conn_visits:
                     cursor = conn_visits.cursor()
