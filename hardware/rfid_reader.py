@@ -27,7 +27,7 @@ def show_no_meal_window(root):
     tk.Label(no_meal_window, text="Сейчас не время приёма пищи", font=("Arial", 36), bg="red", fg="white").pack(expand=True, fill='both')
     no_meal_window.after(3000, no_meal_window.destroy)
 
-def process_uid(uid, root, current_time):
+def process_uid(uid, root, current_time, message_queue):
     meal_type = get_meal_type(current_time)
     if meal_type:
         year = current_time.year   
@@ -89,16 +89,16 @@ def process_uid(uid, root, current_time):
 
                 conn_visits.commit()
                 print(f"UID {uid} обработан для {meal_type} ({russian_meal_type}) в {day_name}.")
-                show_success_window(root)
+                message_queue.put(("show_success", root))
             except Exception as e:
                 print(f"Ошибка при обработке UID: {e}")
             finally:
                 conn_visits.close()
     else:
         print("Сейчас не время приёма пищи.")
-        show_no_meal_window(root)
+        message_queue.put(("show_no_meal", root))
 
-def read_rfid(root):
+def read_rfid(root, message_queue):
     spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
     cs_pin = digitalio.DigitalInOut(board.D5)
     pn532 = PN532_SPI(spi, cs_pin, debug=False)
@@ -111,7 +111,7 @@ def read_rfid(root):
             if uid is not None:
                 uid_str = "".join([f"{byte:02X}" for byte in uid])
                 print(f"Считан UID: {uid_str}")
-                process_uid(uid_str, root, datetime.now())
+                process_uid(uid_str, root, datetime.now(), message_queue)
             sleep(1)
     except KeyboardInterrupt:
         print("Считывание карт остановлено.")
