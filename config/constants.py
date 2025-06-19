@@ -1,6 +1,5 @@
 import os
 
-# Database paths
 DATABASE_STUDENTS = "students.db"
 DATABASE_VISITS = "visits.db"
 DATABASE_REQUESTS = "requests.db"

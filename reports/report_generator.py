@@ -212,7 +212,7 @@ def generate_analytics_report(root):
             }, inplace=True)
 
             # 7. Сокращение названий колонок
-            final_report_df.rename(columns=short_names, inplace=True)
+            final_report_df.rename(columns=SHORT_NAMES, inplace=True)
 
             # 8. Добавление строки с итогами посещений
             # Создаем словарь для итоговой строки
@@ -220,7 +220,7 @@ def generate_analytics_report(root):
 
             # Используем переименованные названия колонок для суммирования
             for col in meal_columns:
-                renamed_col = short_names.get(col, col)  # Получаем переименованное название колонки
+                renamed_col = SHORT_NAMES.get(col, col)  # Получаем переименованное название колонки
                 total_row[renamed_col] = final_report_df[renamed_col].sum()  # Сумма по каждому столбцу
 
             # Добавляем пустые значения для аналитических колонок
