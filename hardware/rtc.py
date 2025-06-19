@@ -4,6 +4,7 @@ import os
 
 from adafruit_ds3231 import DS3231
 import busio
+import board
 
 def set_rtc_time(year_var, month_var, day_var, hour_var, minute_var, second_var, window):
     try:
@@ -28,5 +29,3 @@ def sync_time_with_ds3231():
     time_str = f"{rtc_time.tm_year}-{rtc_time.tm_mon}-{rtc_time.tm_mday} {rtc_time.tm_hour}:{rtc_time.tm_min}:{rtc_time.tm_sec}"
     os.system(f"sudo date -s '{time_str}'")
     print("Время синхронизировано с DS3231.")
-
-    pass

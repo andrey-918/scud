@@ -84,6 +84,7 @@ def process_uid(uid, root, current_time):
                             SET {column_name} = 1
                             WHERE uid = ?
                         ''', (uid,))
+                        conn_students.commit()
                         conn_students.close()
 
                 conn_visits.commit()
@@ -98,7 +99,6 @@ def process_uid(uid, root, current_time):
         show_no_meal_window(root)
 
 def read_rfid(root):
-
     spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
     cs_pin = digitalio.DigitalInOut(board.D5)
     pn532 = PN532_SPI(spi, cs_pin, debug=False)
