@@ -30,9 +30,9 @@ def show_no_meal_window(root):
 def process_uid(uid, root, current_time):
     meal_type = get_meal_type(current_time)
     if meal_type:
-        year = current_time.tm_year
-        month = current_time.tm_mon
-        day = current_time.tm_mday
+        year = current_time.year   
+        month = current_time.month 
+        day = current_time.day
         date_obj = datetime(year, month, day)
         day_of_week = date_obj.weekday()
 
