@@ -3,18 +3,37 @@ from config.settings import load_settings
 
 def get_meal_type(current_time):
     settings = load_settings()
+    print(f"Текущее время: {current_time}")
+    print(f"Настройки: {settings}")
     hour = current_time.hour
     minute = current_time.minute
     valid_meals = ["breakfast", "lunch", "dinner"]
 
-    for meal_type, times in settings.items():
-        if meal_type not in valid_meals or not isinstance(times, dict):
+    for meal_type in valid_meals:
+        if meal_type not in settings:
             continue
-        start_hour, start_minute = times["start"]
-        end_hour, end_minute = times["end"]
-        if (hour > start_hour or (hour == start_hour and minute >= start_minute)) and \
-           (hour < end_hour or (hour == end_hour and minute < end_minute)):
-            return meal_type
+            
+        meal_settings = settings[meal_type]
+        if not isinstance(meal_settings, dict) or 'start' not in meal_settings or 'end' not in meal_settings:
+            continue
+            
+        try:
+            start_hour = int(meal_settings['start'][0])
+            start_minute = int(meal_settings['start'][1])
+            end_hour = int(meal_settings['end'][0])
+            end_minute = int(meal_settings['end'][1])
+            
+            current_total_minutes = hour * 60 + minute
+            start_total_minutes = start_hour * 60 + start_minute
+            end_total_minutes = end_hour * 60 + end_minute
+            
+            if start_total_minutes <= current_total_minutes < end_total_minutes:
+                return meal_type
+                
+        except (ValueError, TypeError, IndexError) as e:
+            print(f"Ошибка в настройках для {meal_type}: {e}")
+            continue
+            
     return None
 
 def is_saturday_dinner_end():

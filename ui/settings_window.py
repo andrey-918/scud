@@ -19,9 +19,13 @@ def open_settings(root):
     
     settings_window.protocol("WM_DELETE_WINDOW", on_closing)
 
+    # Create main frame
+    main_frame = tk.Frame(settings_window, bg="#f0f0f0")
+    main_frame.pack(fill='both', expand=True, padx=10, pady=10)
+
     # Create a canvas with a scrollbar
-    canvas = tk.Canvas(settings_window, bg="#f0f0f0", highlightthickness=0)
-    scrollbar = ttk.Scrollbar(settings_window, orient="vertical", command=canvas.yview)
+    canvas = tk.Canvas(main_frame, bg="#f0f0f0", highlightthickness=0)
+    scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
     content_frame = tk.Frame(canvas, bg="#f0f0f0")
 
     content_frame.bind(
@@ -33,8 +37,11 @@ def open_settings(root):
     canvas.configure(yscrollcommand=scrollbar.set)
 
     # Place canvas and scrollbar
-    canvas.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+    canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
+
+    # Make content_frame expandable
+    content_frame.columnconfigure(1, weight=1)
 
     title_font = ('Arial', 20)
     label_font = ('Arial', 16)
@@ -122,5 +129,8 @@ def open_settings(root):
     tk.Button(button_frame, text="Выход", command=settings_window.destroy,
              font=button_font, bg="#f44336", fg="white", relief="flat", activebackground="#d32f2f").pack(fill='x', pady=3, padx=5)
 
-    # Configure grid weights
-    content_frame.columnconfigure(1, weight=1)
+    # Enable mouse wheel scrolling
+    def _on_mousewheel(event):
+        canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    
+    canvas.bind_all("<MouseWheel>", _on_mousewheel)
