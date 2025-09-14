@@ -9,6 +9,14 @@ def open_rtc_time_setting(root):
     rtc_window.title("Настройка времени на DS3231")
     rtc_window.attributes('-fullscreen', True)
     rtc_window.configure(bg="#f0f0f0")
+    rtc_window.transient(root)
+    rtc_window.grab_set() 
+
+    def on_closing():
+        rtc_window.grab_release()
+        rtc_window.destroy()
+    
+    rtc_window.protocol("WM_DELETE_WINDOW", on_closing)
 
     content_frame = tk.Frame(rtc_window, bg="#f0f0f0")
     content_frame.pack(expand=True, fill='both', padx=10, pady=10)

@@ -10,6 +10,14 @@ def open_settings(root):
     settings_window.title("Настройки")
     settings_window.attributes('-fullscreen', True)
     settings_window.configure(bg="#f0f0f0")
+    settings_window.transient(root) 
+    settings_window.grab_set()
+
+    def on_closing():
+        settings_window.grab_release()
+        settings_window.destroy()
+    
+    settings_window.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Create a canvas with a scrollbar
     canvas = tk.Canvas(settings_window, bg="#f0f0f0", highlightthickness=0)

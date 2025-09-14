@@ -13,7 +13,6 @@ from adafruit_ds3231 import DS3231
 
 from time import sleep
 
-# Initialize RTC
 i2c = busio.I2C(board.SCL, board.SDA)
 rtc = DS3231(i2c)
 
@@ -115,8 +114,7 @@ def read_rfid(root, message_queue):
             if uid is not None:
                 uid_str = "".join([f"{byte:02X}" for byte in uid])
                 print(f"Считан UID: {uid_str}")
-                # Use RTC time for consistency
-                current_time = datetime(*rtc.datetime[:6])  # Convert struct_time to datetime
+                current_time = datetime(*rtc.datetime[:6]) 
                 process_uid(uid_str, root, current_time, message_queue)
             sleep(1)
     except Exception as e:

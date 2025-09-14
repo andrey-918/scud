@@ -15,6 +15,14 @@ def open_user_window(root):
     password_window.title("Ввод пароля")
     password_window.attributes('-fullscreen', True)
     password_window.configure(bg="#f0f0f0")
+    password_window.transient(root) 
+    password_window.grab_set()
+
+    def on_closing():
+        password_window.grab_release()
+        password_window.destroy()
+    
+    password_window.protocol("WM_DELETE_WINDOW", on_closing)
 
     label_font = ('Arial', 24)
     entry_font = ('Arial', 20)
@@ -46,6 +54,14 @@ def show_user_window(root):
     user_window.title("Управление")
     user_window.attributes('-fullscreen', True)
     user_window.configure(bg="#f0f0f0")
+    user_window.transient(root)
+    user_window.grab_set()
+
+    def on_closing():
+        user_window.grab_release()
+        user_window.destroy()
+    
+    user_window.protocol("WM_DELETE_WINDOW", on_closing)
 
     main_frame = tk.Frame(user_window, bg="#f0f0f0")
     main_frame.pack(expand=True, fill='both', padx=20, pady=20)
