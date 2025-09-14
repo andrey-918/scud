@@ -18,8 +18,32 @@ def open_rtc_time_setting(root):
     
     rtc_window.protocol("WM_DELETE_WINDOW", on_closing)
 
-    content_frame = tk.Frame(rtc_window, bg="#f0f0f0")
-    content_frame.pack(expand=True, fill='both', padx=10, pady=10)
+    # Main frame
+    main_frame = tk.Frame(rtc_window, bg="#f0f0f0")
+    main_frame.pack(fill='both', expand=True, padx=10, pady=10)
+
+    # Create canvas with scrollbar
+    canvas = tk.Canvas(main_frame, bg="#f0f0f0", highlightthickness=0)
+    scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+    content_frame = tk.Frame(canvas, bg="#f0f0f0")
+
+    content_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
+
+    canvas.create_window((0, 0), window=content_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    # Place canvas and scrollbar
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+    # Enable mouse wheel scrolling
+    def _on_mousewheel(event):
+        canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    
+    canvas.bind_all("<MouseWheel>", _on_mousewheel)
 
     label_font = ('Arial', 18)
     time_font = ('Arial', 18)
