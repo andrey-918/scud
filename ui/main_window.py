@@ -6,7 +6,10 @@ def create_main_window():
     root = tk.Tk()
     root.title("Учёт льготного питания")
     root.attributes('-fullscreen', True)
-    root.configure(bg="#f0f0f0")  # Light gray background for better contrast
+    root.configure(bg="#f0f0f0")
+
+    root.deiconify()
+    root.focus_force()
 
     time_date_label = tk.Label(root, font=("Arial", 32), fg="black", bg="#f0f0f0")
     time_date_label.pack(expand=True, fill='both', pady=20)
