@@ -12,6 +12,10 @@ def main():
 
     # Create the main application window
     root = create_main_window()
+    
+    # Сразу показываем окно и фокусируем его
+    root.deiconify()
+    root.focus_force()
 
     # Create a queue for thread-safe communication
     message_queue = queue.Queue()
